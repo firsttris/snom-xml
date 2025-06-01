@@ -1,14 +1,15 @@
 # SNOM XML Phone Book Server
 
-A Node.js server that fetches contacts from Google and serves them as an XML phone book compatible with Snom IP phones.
+A Node.js server that syncs your Google Contacts and serves them as an XML phone book compatible with Snom IP phones.
 
 ## 📚 Overview
 
 This project creates a web server that:
 
-- Authenticates with Google to access your contacts
+- **Synchronizes with Google Contacts** - Full integration with Google People API
 - Converts those contacts to Snom-compatible XML format
 - Serves the phone book via HTTP for Snom phones to access
+- **Provides a management dashboard** for monitoring and administration
 
 ## 🔧 Prerequisites
 
@@ -81,6 +82,28 @@ PORT=3000
 3. You'll be redirected back to the application with a success message
 4. The token will be saved locally and used for future requests
 
+### Admin Dashboard
+
+The server includes a web-based dashboard for management:
+
+1. Access the dashboard at `http://localhost:3000/` in your browser
+2. View authentication status with Google at a glance
+3. See how many contacts are currently loaded
+4. Re-authenticate if necessary with one click
+5. View the full phonebook XML directly from the dashboard
+
+This dashboard is especially useful for system administrators who need to monitor or troubleshoot the service without technical knowledge.
+
+### Google Contacts Synchronization
+
+The server provides comprehensive Google Contacts integration:
+
+- **Full contact synchronization** - Names and phone numbers are retrieved
+- **Pagination support** - Handles large contact lists (thousands of contacts)
+- **Phone number formatting** - Automatically cleans up phone numbers for Snom compatibility
+- **Type mapping** - Maps Google contact types (mobile, home, work) to Snom types
+- **Token management** - Handles OAuth token refresh automatically
+
 ### Configure Your Snom Phone
 
 1. Access your Snom phone's web interface
@@ -102,6 +125,8 @@ For detailed instructions on configuring Snom phones for XML directories, refer 
 - `POST /phonebook.xml`: Also serves the phone book XML (required for some Snom phones)
 - `GET /auth/google`: Initiates the Google OAuth2 flow
 - `GET /auth/google/callback`: OAuth2 callback URL
+- `GET /api/status`: Returns server status information (for dashboard)
+- `GET /`: Serves the admin dashboard
 
 ## 📄 License
 
