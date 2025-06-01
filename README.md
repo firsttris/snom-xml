@@ -60,7 +60,6 @@ Create a .env file in the project root:
 ```
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
-PORT=3000
 ```
 
 ## 🚀 Usage
