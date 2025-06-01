@@ -2,7 +2,7 @@ import { Service } from "node-windows";
 import * as path from "path";
 import * as dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 const scriptPath = path.join(__dirname, "../server.js");
 
