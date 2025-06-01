@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snom Phonebook Server Status</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      header {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        color: #2c3e50;
+        margin: 0;
+      }
+      .status-card {
+        background-color: white;
+        border-left: 4px solid #3498db;
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .status-card.error {
+        border-left-color: #e74c3c;
+      }
+      .status-card.success {
+        border-left-color: #2ecc71;
+      }
+      .btn {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+        margin-left: 10px;
+      }
+      .btn:hover {
+        background-color: #2980b9;
+      }
+      .badge {
+        display: inline-block;
+        padding: 3px 7px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #eee;
+        color: #333;
+      }
+      .badge.connected {
+        background-color: #2ecc71;
+        color: white;
+      }
+      .badge.disconnected {
+        background-color: #e74c3c;
+        color: white;
+      }
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>SNOM XML Phonebook Server</h1>
+        <div class="header-actions">
+          <a href="/phonebook.xml" target="_blank" class="btn"
+            >View Full Phonebook</a
+          >
+          <a href="/auth/google" class="btn" id="auth-button"
+            >Authenticate with Google</a
+          >
+        </div>
+      </header>
+
+      <div class="status-card" id="auth-status">
+        <h2>Authentication Status</h2>
+        <p id="auth-message">Checking authentication status...</p>
+        <span class="badge" id="auth-badge">Unknown</span>
+      </div>
+
+      <div class="status-card" id="server-status">
+        <h2>Server Status</h2>
+        <p><strong>Server URL:</strong> <span id="server-url">...</span></p>
+        <p><strong>Contacts:</strong> <span id="contacts-count">...</span></p>
+      </div>
+    </div>
+
+    <script>
+      // Fetch status information from the server
+      async function fetchStatus() {
+        try {
+          const response = await fetch("/api/status");
+          const data = await response.json();
+
+          // Update authentication status
+          const authStatus = document.getElementById("auth-status");
+          const authMessage = document.getElementById("auth-message");
+          const authBadge = document.getElementById("auth-badge");
+          const authButton = document.getElementById("auth-button");
+
+          if (data.authenticated) {
+            authStatus.className = "status-card success";
+            authMessage.innerText = "Successfully authenticated with Google";
+            authBadge.innerText = "Connected";
+            authBadge.className = "badge connected";
+            authButton.innerText = "Re-authenticate";
+          } else {
+            authStatus.className = "status-card error";
+            authMessage.innerText =
+              data.authError || "Not authenticated with Google";
+            authBadge.innerText = "Disconnected";
+            authBadge.className = "badge disconnected";
+          }
+
+          // Update server info
+          document.getElementById("server-url").innerText = data.serverUrl;
+          document.getElementById("contacts-count").innerText =
+            data.contactsCount !== undefined
+              ? `${data.contactsCount} contacts loaded`
+              : "No contacts loaded";
+        } catch (error) {
+          console.error("Error fetching status:", error);
+          document.getElementById("auth-message").innerText =
+            "Error connecting to server: " + error.message;
+          document.getElementById("auth-status").className =
+            "status-card error";
+        }
+      }
+
+      // Initial load
+      fetchStatus();
+    </script>
+  </body>
+</html>
