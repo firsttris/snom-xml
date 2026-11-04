@@ -1,8 +1,9 @@
 import { Service } from "node-windows";
 import * as path from "path";
 
-// Pfad zur kompilierten server.js
-const scriptPath = path.join(__dirname, "../server.js");
+// The script the service was installed with (install.ts): node-windows finds the service's
+// files in the folder "daemon" next to it
+const scriptPath = path.join(__dirname, "../server.ts");
 
 const svc = new Service({
   name: "SNOM XML Phone Book Server",

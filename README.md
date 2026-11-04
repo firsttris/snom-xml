@@ -1,6 +1,6 @@
 # SNOM XML Phone Book Server
 
-A Node.js server that syncs your Google Contacts and serves them as an XML phone book compatible with Snom IP phones.
+A server (TypeScript, run by [Bun](https://bun.sh/)) that syncs your Google Contacts and serves them as an XML phone book compatible with Snom IP phones.
 
 ## 📚 Overview
 
@@ -13,7 +13,7 @@ This project creates a web server that:
 
 ## 🔧 Prerequisites
 
-- Node.js
+- [Bun](https://bun.sh/) (the version in `packageManager` of `package.json`); it runs the TypeScript directly, no build step
 - Google Cloud project with People API enabled
 - Snom IP phone on the same network as the server
 
@@ -25,13 +25,10 @@ git clone https://github.com/firsttris/snom-xml.git
 cd snom-xml
 
 # Install dependencies
-npm install
-
-# Build TypeScript files
-npm run build
+bun install
 
 # Start the server
-npm start
+bun start
 ```
 
 ## ⚙️ Configuration
@@ -55,7 +52,7 @@ npm start
 
 ### Environment Variables
 
-Create a .env file in the project root:
+Create a .env file in the project root (Bun reads it by itself when it starts in that folder):
 
 ```
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -69,10 +66,21 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 1. Start the server:
 
    ```bash
-   npm start
+   bun start
    ```
 
 2. The server will run on port 3000 by default (or the port specified in your .env file)
+
+### Windows Service
+
+On Windows the server can run as a service ([node-windows](https://github.com/coreybutler/node-windows), from an administrator prompt in the project root):
+
+```bash
+bun run install-service    # installs and starts the service
+bun run uninstall-service
+```
+
+The service runs `src/server.ts` with the `bun.exe` that installed it (node-windows' `execPath`), in the project root as working directory, with `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from `.env` at install time. node-windows keeps its files in `src/daemon/`.
 
 ### Authentication
 

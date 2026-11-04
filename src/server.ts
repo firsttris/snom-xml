@@ -2,10 +2,9 @@ import express, { Request, Response } from "express";
 import { google } from "googleapis";
 import fs from "fs";
 import path from "path";
-import dotenv from "dotenv";
 import { create } from "xmlbuilder2";
 
-dotenv.config();
+// Bun reads GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from .env in the working directory
 
 const app = express();
 const port = 3000;

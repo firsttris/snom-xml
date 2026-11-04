@@ -1,17 +1,23 @@
 import { Service } from "node-windows";
 import * as path from "path";
-import * as dotenv from "dotenv";
 
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+// Bun reads .env from the working directory: `bun run install-service` runs in the project root,
+// which is also the working directory of the service (node-windows takes the installer's)
 
-const scriptPath = path.join(__dirname, "../server.js");
+// The service runs the TypeScript source with Bun, no build step: node-windows writes execPath
+// (process.execPath if omitted) as the <executable> of winsw's service XML, which starts
+// node-windows' wrapper.js, and the wrapper starts the script with child_process.fork, that is
+// with the same bun.exe (node-windows lib/winsw.js and lib/wrapper.js, 1.0.0-beta.8)
+const scriptPath = path.join(__dirname, "../server.ts");
 
 const svc = new Service({
   name: "SNOM XML Phone Book Server",
   description:
     "Synchronisiert Google Kontakte und stellt sie als XML für SNOM-Telefone bereit",
   script: scriptPath,
-  nodeOptions: ["--harmony"],
+  execPath: process.execPath,
+  // No Node flags: node-windows passes "--harmony" to the runtime unless told otherwise
+  nodeOptions: [],
   env: [
     {
       name: "GOOGLE_CLIENT_ID",
